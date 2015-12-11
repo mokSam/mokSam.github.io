@@ -25,7 +25,7 @@
 	</div>
 <div id="md" style="display: none;">
 <!-- markdown -->
-刚开始用UITextFieldDelegate回收键盘，现在只需一句话
+刚开始在UITextFieldDelegate中一一对UITextField执行resignFirstResponder回收键盘，现在只需一句话
 
     - (void)dismissKeyBoard{
         [[UIApplication sharedApplication] sendAction:@selector(resignFirstResponder) to:nil from:nil forEvent:nil];
@@ -34,7 +34,7 @@
 </div>
 <div class="entry" id="main">
 <!-- content -->
-<p>刚开始用UITextFieldDelegate回收键盘，现在只需一句话</p>
+<p>刚开始在UITextFieldDelegate中一一对UITextField执行resignFirstResponder回收键盘，现在只需一句话</p>
 
 <pre><code>- (void)dismissKeyBoard{
     [[UIApplication sharedApplication] sendAction:@selector(resignFirstResponder) to:nil from:nil forEvent:nil];
