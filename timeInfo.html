@@ -1,0 +1,335 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="Keywords" content="blog"/>
+    <meta name="Description" content="blog"/>
+    <title>Simple</title>
+    <link rel="shortcut icon" href="/static/favicon.png"/>
+    <link rel="stylesheet" type="text/css" href="/main.css" />
+</head>
+<body>
+<div class="main">
+    <div class="header">
+    	<ul id="pages">
+            <li><a href="/">home</a></li>
+            <li><a href="/#/tags">tags</a></li>
+            <li><a href="/#/archive">archive</a></li>
+    	</ul>
+    </div>
+	<div class="wrap-header">
+	<h1>
+    <a href="/" id="title"></a>
+	</h1>
+	</div>
+<div id="md" style="display: none;">
+<!-- markdown -->
+
+当前时间的年、月、日、时、分、秒
+-
+
+    //工具类ToolHelper中定义方法获取日历
+    + (NSDateComponents *)Calendar{
+        NSCalendar *calendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
+        NSDate *now=[NSDate date];
+        NSDateComponents *comps = [[NSDateComponents alloc] init];
+        NSInteger unitFlags = NSYearCalendarUnit | NSMonthCalendarUnit | NSDayCalendarUnit | NSWeekdayCalendarUnit |
+        NSHourCalendarUnit | NSMinuteCalendarUnit | NSSecondCalendarUnit;
+        comps = [calendar components:unitFlags fromDate:now];
+        return comps;
+    }
+
+    // 在需要的地方调用获得当前时间的年、月、日、时、分、秒
+    NSInteger year = [[ToolHelper Calendar] year];
+    NSInteger month = [[ToolHelper Calendar] month];
+    NSInteger day = [[ToolHelper Calendar] day];
+    NSInteger hour = [[ToolHelper Calendar] hour];
+    NSInteger minute = [[ToolHelper Calendar] minute];
+    NSInteger second = [[ToolHelper Calendar] second];
+
+一年中天数  
+-
+    // 获取当前年的天数
+    + (NSUInteger)numberOfDaysInThisYear{
+        NSCalendar *calender = [NSCalendar currentCalendar];
+        NSDate *startOfYear;
+        NSTimeInterval lengthOfYear;
+        [calender rangeOfUnit:NSYearCalendarUnit
+                    startDate:&startOfYear
+                     interval:&lengthOfYear
+                      forDate:[NSDate date]];
+        NSDate *endOfYear = [startOfYear dateByAddingTimeInterval:lengthOfYear];
+        NSDateComponents *comp = [calender components:NSDayCalendarUnit
+                                             fromDate:startOfYear
+                                               toDate:endOfYear
+                                              options:0];
+        return [comp day];;
+    }
+
+
+一月中天数
+-
+
+    // 获取当前月的天数
+    + (NSUInteger)numberOfDaysInMonth{
+        NSDate *date = [NSDate date];
+        NSCalendar *calender = [NSCalendar currentCalendar];
+        NSRange rangeD = [calender rangeOfUnit:NSDayCalendarUnit
+                                        inUnit: NSYearCalendarUnit
+                                       forDate: date];
+        return rangeD.length;
+    }
+
+
+时间、时间戳
+-
+    NSDateFormatter *dateFormater = [[NSDateFormatter alloc] init];
+    //时间戳 年月日时分秒
+    [dateFormater setDateFormat:@"yyyyMMddHHmmss"];
+    NSDate *begin = [NSDate dateWithTimeIntervalSince1970:[dic[@"beginTime"] doubleValue]/1000];
+    NSString *simOrder = [dateFormater stringFromDate: begin];
+
+    // 当前时间转换年月日时分秒毫秒
+    [dateFormater setDateFormat:@"yyyyMMddHHmmssSSS"];
+    NSString *simOrderTime = [dateFormater stringFromDate:[NSDate date]];
+    
+    // 获得时间NSDate
+    [dateFormater setDateFormat:@"yyyyMMddHHmmss"];
+    NSDate *date = [formatter dateFromString:@"1283376197"];
+
+
+应用：随机显示欢迎语
+-
+
+记得当时老大给了我一个plist文件，让我每天不重样的显示一条欢迎语，刚开始随机这个次把我带沟里了，如果用arc4random()只能保证每次显示的时候不重样，但如何保证一天内都保持这一条欢迎语呢？想啊 想，突然我有个想法：一个周7天，欢迎语10个数组，就从数组第一个元素开始取，之后一一对应，想这个样
+#####周一：a[0]
+######..
+######周天：a[6]
+######周一：a[7]
+######...
+######周三：a[9]
+######周四：a[0]
+用时间解决问题，完美~
+<span class="loading">upload image now!</span>
+
+    - (void)randomWelcomeMessages{
+        // 随机显示欢迎标语
+        NSString *path = [[NSBundle mainBundle] pathForResource:@"WelcomeMessageList" ofType:@"plist"];
+        NSArray *arr = [[NSArray alloc]initWithContentsOfFile:path];
+        NSTimeInterval time = [[NSDate date] timeIntervalSince1970];
+        long long dTime = @(time).longLongValue;
+        int i = (dTime/60/60/24)%10;
+        NSDictionary *today;
+        if (i < arr.count) {
+            today = arr[i];
+        }
+        
+        [today enumerateKeysAndObjectsUsingBlock:^(NSString *key, NSString *message, BOOL *stop) {
+            NSInteger hour = [[ToolHelper Calendar] hour];
+            NSRange h = [key rangeOfString:@"-"];
+            NSInteger befor = [[key substringToIndex:h.location] doubleValue];
+            NSInteger after = [[key substringFromIndex:h.location+1] doubleValue];
+            if (hour > befor && hour <= after) {
+                self.welcomeMessage.text = message;
+                *stop = YES;
+            }
+        }];
+
+    }
+
+
+
+<!-- markdown end -->
+</div>
+<div class="entry" id="main">
+<!-- content -->
+<h2 id="">当前时间的年、月、日、时、分、秒</h2>
+
+<pre><code>//工具类ToolHelper中定义方法获取日历
++ (NSDateComponents *)Calendar{
+    NSCalendar *calendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
+    NSDate *now=[NSDate date];
+    NSDateComponents *comps = [[NSDateComponents alloc] init];
+    NSInteger unitFlags = NSYearCalendarUnit | NSMonthCalendarUnit | NSDayCalendarUnit | NSWeekdayCalendarUnit |
+    NSHourCalendarUnit | NSMinuteCalendarUnit | NSSecondCalendarUnit;
+    comps = [calendar components:unitFlags fromDate:now];
+    return comps;
+}
+
+// 在需要的地方调用获得当前时间的年、月、日、时、分、秒
+NSInteger year = [[ToolHelper Calendar] year];
+NSInteger month = [[ToolHelper Calendar] month];
+NSInteger day = [[ToolHelper Calendar] day];
+NSInteger hour = [[ToolHelper Calendar] hour];
+NSInteger minute = [[ToolHelper Calendar] minute];
+NSInteger second = [[ToolHelper Calendar] second];
+</code></pre>
+
+<h2 id="">一年中天数  </h2>
+
+<pre><code>// 获取当前年的天数
++ (NSUInteger)numberOfDaysInThisYear{
+    NSCalendar *calender = [NSCalendar currentCalendar];
+    NSDate *startOfYear;
+    NSTimeInterval lengthOfYear;
+    [calender rangeOfUnit:NSYearCalendarUnit
+                startDate:&amp;startOfYear
+                 interval:&amp;lengthOfYear
+                  forDate:[NSDate date]];
+    NSDate *endOfYear = [startOfYear dateByAddingTimeInterval:lengthOfYear];
+    NSDateComponents *comp = [calender components:NSDayCalendarUnit
+                                         fromDate:startOfYear
+                                           toDate:endOfYear
+                                          options:0];
+    return [comp day];;
+}
+</code></pre>
+
+<h2 id="">一月中天数</h2>
+
+<pre><code>// 获取当前月的天数
++ (NSUInteger)numberOfDaysInMonth{
+    NSDate *date = [NSDate date];
+    NSCalendar *calender = [NSCalendar currentCalendar];
+    NSRange rangeD = [calender rangeOfUnit:NSDayCalendarUnit
+                                    inUnit: NSYearCalendarUnit
+                                   forDate: date];
+    return rangeD.length;
+}
+</code></pre>
+
+<h2 id="">时间、时间戳</h2>
+
+<pre><code>NSDateFormatter *dateFormater = [[NSDateFormatter alloc] init];
+//时间戳 年月日时分秒
+[dateFormater setDateFormat:@"yyyyMMddHHmmss"];
+NSDate *begin = [NSDate dateWithTimeIntervalSince1970:[dic[@"beginTime"] doubleValue]/1000];
+NSString *simOrder = [dateFormater stringFromDate: begin];
+
+// 当前时间转换年月日时分秒毫秒
+[dateFormater setDateFormat:@"yyyyMMddHHmmssSSS"];
+NSString *simOrderTime = [dateFormater stringFromDate:[NSDate date]];
+
+// 获得时间NSDate
+[dateFormater setDateFormat:@"yyyyMMddHHmmss"];
+NSDate *date = [formatter dateFromString:@"1283376197"];
+</code></pre>
+
+<h2 id="">应用：随机显示欢迎语</h2>
+
+<p>记得当时老大给了我一个plist文件，让我每天不重样的显示一条欢迎语，刚开始随机这个次把我带沟里了，如果用arc4random()只能保证每次显示的时候不重样，但如何保证一天内都保持这一条欢迎语呢？想啊 想，突然我有个想法：一个周7天，欢迎语10个数组，就从数组第一个元素开始取，之后一一对应，想这个样</p>
+
+<h5 id="a0">周一：a[0]</h5>
+
+<h6 id="">..</h6>
+
+<h6 id="a6">周天：a[6]</h6>
+
+<h6 id="a7">周一：a[7]</h6>
+
+<h6 id="">...</h6>
+
+<h6 id="a9">周三：a[9]</h6>
+
+<h6 id="a0">周四：a[0]</h6>
+
+<p>用时间解决问题，完美~
+<span class="loading">upload image now!</span></p>
+
+<pre><code>- (void)randomWelcomeMessages{
+    // 随机显示欢迎标语
+    NSString *path = [[NSBundle mainBundle] pathForResource:@"WelcomeMessageList" ofType:@"plist"];
+    NSArray *arr = [[NSArray alloc]initWithContentsOfFile:path];
+    NSTimeInterval time = [[NSDate date] timeIntervalSince1970];
+    long long dTime = @(time).longLongValue;
+    int i = (dTime/60/60/24)%10;
+    NSDictionary *today;
+    if (i &lt; arr.count) {
+        today = arr[i];
+    }
+
+    [today enumerateKeysAndObjectsUsingBlock:^(NSString *key, NSString *message, BOOL *stop) {
+        NSInteger hour = [[ToolHelper Calendar] hour];
+        NSRange h = [key rangeOfString:@"-"];
+        NSInteger befor = [[key substringToIndex:h.location] doubleValue];
+        NSInteger after = [[key substringFromIndex:h.location+1] doubleValue];
+        if (hour &gt; befor &amp;&amp; hour &lt;= after) {
+            self.welcomeMessage.text = message;
+            *stop = YES;
+        }
+    }];
+
+}
+</code></pre>
+<!-- content end -->
+</div>
+<br>
+<br>
+    <div id="disqus_thread"></div>
+	<div class="footer">
+		<p>© Copyright 2014 by isnowfy, Designed by isnowfy</p>
+	</div>
+</div>
+<script src="main.js"></script>
+<script id="content" type="text/mustache">
+    <h1>{{title}}</h1>
+    <div class="tag">
+    {{date}}
+    {{#tags}}
+    <a href="/#/tag/{{name}}">#{{name}}</a>
+    {{/tags}}
+    </div>
+</script>
+<script id="pagesTemplate" type="text/mustache">
+    {{#pages}}
+    <li>
+        <a href="{{path}}">{{title}}</a>
+    </li>
+    {{/pages}}
+</script>
+<script>
+$(document).ready(function() {
+    $.ajax({
+        url: "main.json",
+        type: "GET",
+        dataType: "json",
+        success: function(data) {
+            $("#title").html(data.name);
+            var pagesTemplate = Hogan.compile($("#pagesTemplate").html());
+            var pagesHtml = pagesTemplate.render({"pages": data.pages});
+            $("#pages").append(pagesHtml);
+            //path
+            var path = "timeInfo.html";
+            //path end
+            var now = 0;
+            for (var i = 0; i < data.posts.length; ++i)
+                if (path == data.posts[i].path)
+                    now = i;
+            var post = data.posts[now];
+            var tmp = post.tags.split(" ");
+            var tags = [];
+            for (var i = 0; i < tmp.length; ++i)
+                if (tmp[i].length > 0)
+                    tags.push({"name": tmp[i]});
+            var contentTemplate = Hogan.compile($("#content").html());
+            var contentHtml = contentTemplate.render({"title": post.title, "tags": tags, "date": post.date});
+            $("#main").prepend(contentHtml);
+            if (data.disqus_shortname.length > 0) {
+                var disqus_shortname = data.disqus_shortname;
+                (function() {
+                    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+                    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+                    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+                })();
+            }
+        }
+    });
+});
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ["\\(", "\\)"]], processEscapes: true}});
+</script>
+</body>
+</html>
